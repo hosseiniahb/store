@@ -15,7 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { CategoryFormSchema, CategoryFormSchemaType } from "@/lib/schema";
 import { Loader } from "lucide-react";
-import { useTransition } from "react";
 import { Textarea } from "@/components/ui/textarea";
 
 type CategoryFormProps = {
@@ -29,8 +28,6 @@ export function CategoryForm({
   categoryData,
   handleCategoryForm,
 }: CategoryFormProps) {
-  const [isPending, startTransition] = useTransition();
-
   const form = useForm<CategoryFormSchemaType>({
     resolver: zodResolver(CategoryFormSchema),
     defaultValues: {
@@ -40,10 +37,8 @@ export function CategoryForm({
   });
 
   function onSubmit(values: CategoryFormSchemaType) {
-    startTransition(() => {
-      handleCategoryForm(values);
-      form.reset();
-    });
+    handleCategoryForm(values);
+    form.reset();
   }
 
   return (
@@ -64,7 +59,11 @@ export function CategoryForm({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Phone" {...field} />
+                    <Input
+                      placeholder="Phone"
+                      disabled={form.formState.isSubmitting}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage className="dark:text-red-500" />
                 </FormItem>
@@ -80,6 +79,7 @@ export function CategoryForm({
                     <Textarea
                       placeholder="Description for category"
                       className="resize-none h-[80%]"
+                      disabled={form.formState.isSubmitting}
                       {...field}
                     />
                   </FormControl>
@@ -89,11 +89,13 @@ export function CategoryForm({
             />
           </div>
           <Button
-            disabled={isPending || !form.formState.isValid}
+            disabled={form.formState.isSubmitting || !form.formState.isValid}
             type="submit"
             className="transition-all"
           >
-            {isPending && <Loader size={18} className="animate-spin mr-2" />}
+            {form.formState.isSubmitting && (
+              <Loader size={18} className="animate-spin mr-2" />
+            )}
             {type === "Create" ? "Create" : "Edit"}
           </Button>
         </form>

@@ -36,42 +36,46 @@ export function UserInfoForm({ userData, handleUserForm }: UserFormProps) {
       user_name: userData?.user_name,
       email: userData?.email,
       avatar_url: userData?.avatar_url,
-      phone: userData?.phone,
+      phone: userData?.phone || "",
     },
   });
 
   function onSubmit(values: UserInfoFormSchemaType) {
-    startTransition(async () => {
-      let uploadedImageUrl = values.avatar_url;
-      if (file.length > 0) {
-        const res = await edgestore.publicFiles.upload({
-          file: file[0],
-          onProgressChange(progress) {
-            setProgressUploadImage(progress);
-          },
-        });
+    try {
+      startTransition(async () => {
+        let uploadedImageUrl = values.avatar_url;
+        if (file.length > 0) {
+          const res = await edgestore.publicFiles.upload({
+            file: file[0],
+            onProgressChange(progress) {
+              setProgressUploadImage(progress);
+            },
+          });
 
-        let imageUrlFromDB =
-          typeof userData?.avatar_url === "string"
-            ? userData.avatar_url
-            : String(userData?.avatar_url);
+          let imageUrlFromDB =
+            typeof userData?.avatar_url === "string"
+              ? userData.avatar_url
+              : String(userData?.avatar_url);
 
-        if (imageUrlFromDB !== res.url.toString()) {
-          if (!imageUrlFromDB.includes("https://avatars")) {
-            await edgestore.publicFiles.delete({
-              url: imageUrlFromDB,
-            });
+          if (imageUrlFromDB !== res.url.toString()) {
+            if (!imageUrlFromDB.includes("https://avatars")) {
+              await edgestore.publicFiles.delete({
+                url: imageUrlFromDB,
+              });
+            }
+            uploadedImageUrl = res.url;
           }
-          uploadedImageUrl = res.url;
         }
-      }
 
-      handleUserForm({
-        ...values,
-        avatar_url: uploadedImageUrl,
+        handleUserForm({
+          ...values,
+          avatar_url: uploadedImageUrl,
+        });
+        form.reset();
       });
-      form.reset();
-    });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -94,6 +98,7 @@ export function UserInfoForm({ userData, handleUserForm }: UserFormProps) {
                       setFile={setFile}
                       onFieldChange={field.onChange}
                       progressUploadImage={progressUploadImage}
+                      disabled={isPending}
                     />
                   </FormControl>
                   <FormMessage className="dark:text-red-500" />
@@ -109,7 +114,7 @@ export function UserInfoForm({ userData, handleUserForm }: UserFormProps) {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="John" {...field} />
+                    <Input placeholder="John" disabled={isPending} {...field} />
                   </FormControl>
                   <FormMessage className="dark:text-red-500" />
                 </FormItem>
@@ -122,7 +127,11 @@ export function UserInfoForm({ userData, handleUserForm }: UserFormProps) {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="example@gmail.com" {...field} />
+                    <Input
+                      placeholder="example@gmail.com"
+                      disabled={isPending}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage className="dark:text-red-500" />
                 </FormItem>
@@ -136,7 +145,11 @@ export function UserInfoForm({ userData, handleUserForm }: UserFormProps) {
                 <FormItem>
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
-                    <Input placeholder="+1 2156800000" {...field} />
+                    <Input
+                      placeholder="+1 2156800000"
+                      disabled={isPending}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage className="dark:text-red-500" />
                 </FormItem>

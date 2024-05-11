@@ -1,5 +1,3 @@
-import { Json } from "@/lib/types/supabase";
-
 export interface I_Product {
   category_id?: string;
   count: number;
@@ -44,3 +42,44 @@ export type T_User_Payment = {
 };
 
 export type T_CartItem = { quantity: number; products: I_Product };
+
+export type T_PaymentDetails = {
+  id: string;
+  order_id: string;
+  amount: number;
+  provider: string;
+  status: string;
+  created_at: string;
+  modified_at: string;
+};
+
+export type T_OrderUser = {
+  id: string;
+  payment_details: T_PaymentDetails;
+};
+
+export type T_OrderProduct = {
+  quantity: number;
+  products: I_Product;
+};
+
+export type T_UserAddress = {
+  user_id: string;
+  address: string;
+  city: string;
+  postal_code: string;
+  country: string;
+  telephone: string;
+  mobile: string;
+  users: I_User;
+};
+
+export type T_OrderBill = {
+  id?: string;
+  order_id?: string;
+  amount: number;
+  status: "paid" | "unpaid";
+  provider?: string;
+  created_at?: string;
+  modified_at?: string;
+};

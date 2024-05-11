@@ -1,6 +1,4 @@
-import Loading from "@/components/Loading";
 import OrdersUserTable from "@/components/user/orders/OrdersUserTable";
-import { Suspense } from "react";
 
 export default function Orders() {
   return (
@@ -9,9 +7,7 @@ export default function Orders() {
         <h1 className="text-3xl font-bold text-slate-500">Order Management</h1>
       </div>
       <div className="w-full my-6">
-        <Suspense fallback={<Loading />}>
-          <OrdersUserTable/>
-        </Suspense>
+        <OrdersUserTable />
       </div>
     </div>
   );

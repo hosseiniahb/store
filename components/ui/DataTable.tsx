@@ -47,7 +47,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className="w-full">
       {/* Filter Search */}
       <div className="w-full flex items-center py-4 gap-4">
         <DataTableViewOptions table={table} />

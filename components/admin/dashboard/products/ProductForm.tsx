@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ProductFormSchema, ProductFormSchemaType } from "@/lib/schema";
 import { Loader } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { SingleImageDropzone } from "@/components/SingleImageDropzone";
 import { useEdgeStore } from "@/lib/edgestore";
@@ -32,7 +32,6 @@ export function ProductForm({
   productData,
   handleProductForm,
 }: ProductFormProps) {
-  const [isPending, startTransition] = useTransition();
   const [file, setFile] = useState<File[]>([]);
   const [progressUploadImage, setProgressUploadImage] = useState<number>(0);
   const { edgestore } = useEdgeStore();
@@ -49,56 +48,52 @@ export function ProductForm({
     },
   });
 
-  function onSubmit(values: ProductFormSchemaType) {
+  async function onSubmit(values: ProductFormSchemaType) {
     try {
       if (type === "Create") {
-        startTransition(async () => {
-          let uploadedImageUrl = values.image_url;
-          if (file.length > 0) {
-            const res = await edgestore.publicFiles.upload({
-              file: file[0],
-              onProgressChange(progress) {
-                setProgressUploadImage(progress);
-              },
-            });
-
-            uploadedImageUrl = res.url;
-          }
-          handleProductForm({
-            ...values,
-            image_url: uploadedImageUrl,
+        let uploadedImageUrl = values.image_url;
+        if (file.length > 0) {
+          const res = await edgestore.publicFiles.upload({
+            file: file[0],
+            onProgressChange(progress) {
+              setProgressUploadImage(progress);
+            },
           });
-          form.reset();
+
+          uploadedImageUrl = res.url;
+        }
+        handleProductForm({
+          ...values,
+          image_url: uploadedImageUrl,
         });
+        form.reset();
       }
 
       if (type === "Edit") {
-        startTransition(async () => {
-          let uploadedImageUrl = values.image_url;
-          if (file.length > 0) {
-            const res = await edgestore.publicFiles.upload({
-              file: file[0],
-              onProgressChange(progress) {
-                setProgressUploadImage(progress);
-              },
-            });
-
-            let imageUrlFromDB = String(productData?.image_url);
-
-            if (imageUrlFromDB !== res.url.toString()) {
-              await edgestore.publicFiles.delete({
-                url: imageUrlFromDB,
-              });
-              uploadedImageUrl = res.url;
-            }
-          }
-
-          handleProductForm({
-            ...values,
-            image_url: uploadedImageUrl,
+        let uploadedImageUrl = values.image_url;
+        if (file.length > 0) {
+          const res = await edgestore.publicFiles.upload({
+            file: file[0],
+            onProgressChange(progress) {
+              setProgressUploadImage(progress);
+            },
           });
-          form.reset();
+
+          let imageUrlFromDB = String(productData?.image_url);
+
+          if (imageUrlFromDB !== res.url.toString()) {
+            await edgestore.publicFiles.delete({
+              url: imageUrlFromDB,
+            });
+            uploadedImageUrl = res.url;
+          }
+        }
+
+        handleProductForm({
+          ...values,
+          image_url: uploadedImageUrl,
         });
+        form.reset();
       }
     } catch (error) {
       console.log("Something went wrong!");
@@ -128,6 +123,7 @@ export function ProductForm({
                       setFile={setFile}
                       onFieldChange={field.onChange}
                       progressUploadImage={progressUploadImage}
+                      disabled={form.formState.isSubmitting}
                     />
                   </FormControl>
                   <FormMessage className="dark:text-red-500" />
@@ -143,7 +139,11 @@ export function ProductForm({
                 <FormItem className="w-full">
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Book" {...field} />
+                    <Input
+                      placeholder="Book"
+                      disabled={form.formState.isSubmitting}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage className="dark:text-red-500" />
                 </FormItem>
@@ -163,6 +163,7 @@ export function ProductForm({
                       onChange={(event) =>
                         field.onChange(Number(event.target.value))
                       }
+                      disabled={form.formState.isSubmitting}
                     />
                   </FormControl>
                   <FormMessage className="dark:text-red-500" />
@@ -183,6 +184,7 @@ export function ProductForm({
                       onChange={(event) =>
                         field.onChange(Number(event.target.value))
                       }
+                      disabled={form.formState.isSubmitting}
                     />
                   </FormControl>
                   <FormMessage className="dark:text-red-500" />
@@ -216,6 +218,7 @@ export function ProductForm({
                       placeholder="Description for product"
                       className="resize-none h-[80%]"
                       {...field}
+                      disabled={form.formState.isSubmitting}
                     />
                   </FormControl>
                   <FormMessage className="dark:text-red-500" />
@@ -224,11 +227,13 @@ export function ProductForm({
             />
             <div className="w-full">
               <Button
-                disabled={isPending || !form.formState.isValid}
+                disabled={
+                  form.formState.isSubmitting || !form.formState.isValid
+                }
                 type="submit"
                 className="transition-all w-full"
               >
-                {isPending && (
+                {form.formState.isSubmitting && (
                   <Loader size={18} className="animate-spin mr-2" />
                 )}
                 {type === "Create" ? "Create" : "Edit"}

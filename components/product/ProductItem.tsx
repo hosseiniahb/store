@@ -21,14 +21,15 @@ export default function ProductItem({
 }: ProductItemProps) {
   return (
     <div className="flex flex-col items-center justify-between gap-3 max-w-[220px] min-h-[224px] bg-accent rounded-lg p-2">
-      <div className="relative rounded-lg overflow-hidden">
-        <Link href={`/product/${id}`} className="group">
+      <div className="w-[212px] h-[140px] relative rounded-lg overflow-hidden">
+        <Link href={`/product/${id}`} className="w-[212px] h-[140px] group">
           <Image
             alt="product picture"
             src={image_url}
             width={212}
-            height={206}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            height={140}
+            priority
+            sizes="(max-width: 768px) 212px, (max-width: 1200px) 212px"
             className="object-cover object-center rounded-lg transition-all group-hover:scale-110"
           />
         </Link>

@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import CartItem from "./CartItem";
-import CartPayment from "./CartPayment";
 import { getAllCartItem } from "@/lib/actions/user/cart.actions";
 import Loading from "../Loading";
 import { useCart } from "@/lib/store/cart.store";
+import Checkout from "../stripe/Checkout";
 
 export default function CartItems() {
   const { cartItems, setCartItems } = useCart();
@@ -44,7 +44,7 @@ export default function CartItems() {
           </div>
         )}
       </div>
-      {cartItems.length > 0 && <CartPayment />}
+      {cartItems.length > 0 && <Checkout />}
     </div>
   );
 }

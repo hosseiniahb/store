@@ -15,7 +15,7 @@ import { useEffect } from "react";
 import CartItems from "./CartItems";
 
 export default function Cart() {
-  const { count, setCount } = useCart();
+  const { count, setCount, cartItems } = useCart();
 
   useEffect(() => {
     const getQuantityCart = async () => {

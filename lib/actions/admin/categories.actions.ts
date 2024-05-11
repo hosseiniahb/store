@@ -13,7 +13,6 @@ export async function getAllCategories() {
     const resultCategories = await supabase
       .from("product_category")
       .select("id, name")
-      .limit(5)
       .order("created_at", { ascending: false });
 
     return JSON.stringify(resultCategories);

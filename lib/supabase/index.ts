@@ -3,6 +3,7 @@
 import { CookieOptions, createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { Database } from "@/lib/types/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 export async function createSupabaseServerClient() {
   const cookieStore = cookies();
@@ -20,6 +21,19 @@ export async function createSupabaseServerClient() {
         remove(name: string, options: CookieOptions) {
           cookieStore.set({ name, value: "", ...options });
         },
+      },
+    }
+  );
+}
+
+export async function createSupabaseAdmin() {
+  return await createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SERVICE_ROLE!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
       },
     }
   );

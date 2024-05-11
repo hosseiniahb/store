@@ -144,7 +144,7 @@ const SingleImageDropzone = forwardRef<HTMLInputElement, InputProps>(
               className="w-full object-cover object-center"
               src={imageUrl}
               fill
-              alt="product image"
+              alt="image"
             />
           ) : (
             // Upload Icon

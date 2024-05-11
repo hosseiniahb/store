@@ -78,6 +78,12 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      backgroundImage: {
+        "shopping-bag-light":
+          "url('/public/images/orders/shopping-bag-light.svg')",
+        "shopping-bag-dark":
+          "url('/public/images/orders/shopping-bag-dark.svg')",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

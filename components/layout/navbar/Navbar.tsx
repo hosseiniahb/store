@@ -19,7 +19,7 @@ export function Navbar() {
   return (
     <>
       {/* Navbar for Desktop */}
-      <nav className="hidden md:flex items-center justify-between px-5 py-4 border-b">
+      <nav className="hidden container mx-auto md:flex items-center justify-between p-5">
         <div className="flex items-center gap-10">
           <Brand
             label="Store"

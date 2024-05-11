@@ -14,9 +14,11 @@ import { Button } from "./ui/button";
 import { useUser } from "@/lib/store/user.store";
 import { RxDashboard } from "react-icons/rx";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useCart } from "@/lib/store/cart.store";
 
 export default function Profile() {
   const { user, setUser } = useUser();
+  const { setCount } = useCart();
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -24,8 +26,10 @@ export default function Profile() {
   );
 
   const handleLogout = async () => {
+    location.href = "/";
     await supabase.auth.signOut();
     setUser(null);
+    setCount(0);
   };
 
   const is_admin = user?.role === "admin";

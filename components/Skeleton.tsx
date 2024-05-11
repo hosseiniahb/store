@@ -25,6 +25,44 @@ export function CategoryItemSkeleton() {
   );
 }
 
+export function OrderBillSkeleton() {
+  return (
+    <div className="w-72 h-auto p-3 shadow-md rounded-lg flex flex-col items-center dark:shadow-slate-800">
+      <div className="w-14 h-14 rounded-full bg-slate-300 dark:bg-slate-800 animate-pulse" />
+      <div className="w-48 h-5 mt-5 rounded-lg bg-slate-300 dark:bg-slate-800  animate-pulse" />
+      <div className="w-full flex flex-col gap-3 mt-10">
+        <div className="w-full flex items-center justify-between">
+          <div className="w-24 h-5 rounded-lg bg-slate-300 dark:bg-slate-800  animate-pulse" />
+          <div className="w-20 h-5 rounded-lg bg-slate-300 dark:bg-slate-800  animate-pulse" />
+        </div>
+      </div>
+      <div className="w-full h-10 rounded-lg bg-slate-300 dark:bg-slate-800  animate-pulse mt-5" />
+    </div>
+  );
+}
+
+export function DataTableSkeleton() {
+  return (
+    <div className="w-full animate-pulse flex flex-col rounded-lg p-2">
+      <div className="w-full h-12 rounded-lg bg-slate-300 dark:bg-slate-800 mb-3" />
+      <div className="w-full h-16 rounded-lg bg-slate-300 dark:bg-slate-800 mb-2" />
+      <div className="w-full h-16 rounded-lg bg-slate-300 dark:bg-slate-800 mb-2" />
+    </div>
+  );
+}
+
+export function OrderUserInformationSkeleton() {
+  return (
+    <div className="w-9/12 flex flex-col gap-2 rounded-lg p-2 mt-5">
+      <div className="w-56 h-8 animate-pulse rounded-lg bg-slate-300 dark:bg-slate-800" />
+      <div className="w-56 h-8 animate-pulse rounded-lg bg-slate-300 dark:bg-slate-800" />
+      <div className="w-56 h-8 animate-pulse rounded-lg bg-slate-300 dark:bg-slate-800" />
+      <div className="w-56 h-8 animate-pulse rounded-lg bg-slate-300 dark:bg-slate-800" />
+      <div className="w-56 h-8 animate-pulse rounded-lg bg-slate-300 dark:bg-slate-800" />
+    </div>
+  );
+}
+
 export function ProductItemsSkeleton() {
   return (
     <div className="w-full flex flex-wrap gap-2">

@@ -1,26 +1,46 @@
-import { DataTable } from "@/components/ui/DataTable";
+"use client";
+
 import { ColumnOrderUserTable } from "@/components/DataTableColumns";
-import { toast } from "@/components/ui/use-toast";
-import { getOrdersUser } from "@/lib/actions/user/orders.actions";
+import { DataTableSkeleton } from "@/components/Skeleton";
+import { DataTable } from "@/components/ui/DataTable";
+import { getUserOrderItems } from "@/lib/actions/user/orders.actions";
+import { useUser } from "@/lib/store/user.store";
+import { useEffect, useState } from "react";
+import OrderNotFound from "./OrderNotFound";
 
-export default async function OrdersUserTable() {
-  try {
-    const result = await getOrdersUser();
-    const { data, error } = JSON.parse(result!);
+export default function OrdersUserTable() {
+  const { user } = useUser();
+  const [orderItems, setOrderItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-    if (error) {
-      toast({
-        title: "Fail to get orders.",
-        description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(error.message)}</code>
-          </pre>
-        ),
-      });
-      return <h1>Unfortunately, no data was found.</h1>;
+  useEffect(() => {
+    setIsLoading(true);
+    if (user?.id) {
+      const getOrderItems = async () => {
+        const response = await getUserOrderItems();
+        const { data } = JSON.parse(response!);
+
+        if (data && data.length) {
+          setIsLoading(false);
+          setOrderItems(data);
+          return;
+        }
+
+        setIsLoading(false);
+      };
+      getOrderItems();
     }
-    return <DataTable columns={ColumnOrderUserTable} data={data} />;
-  } catch (error) {
-    console.log(error);
-  }
+  }, []);
+
+  return (
+    <div className="w-full flex flex-wrap gap-2">
+      {isLoading ? (
+        <DataTableSkeleton />
+      ) : orderItems.length ? (
+        <DataTable columns={ColumnOrderUserTable} data={orderItems} />
+      ) : (
+        <OrderNotFound />
+      )}
+    </div>
+  );
 }

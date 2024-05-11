@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
-export default function SocialSignIn() {
+export default function SocialSignIn({ isDisabled }: { isDisabled: boolean }) {
   const pathname = usePathname();
 
   const supabase = createBrowserClient(
@@ -28,6 +28,7 @@ export default function SocialSignIn() {
       {/* Github */}
       <form onSubmit={loginWithGithub} className="w-full">
         <Button
+          disabled={isDisabled}
           variant="outline"
           size="lg"
           className="w-full flex items-center justify-center gap-2 "
@@ -39,6 +40,7 @@ export default function SocialSignIn() {
       {/* Google */}
       <form className="w-full">
         <Button
+          disabled={isDisabled}
           variant="outline"
           size="lg"
           className="w-full flex items-center justify-center gap-2 "

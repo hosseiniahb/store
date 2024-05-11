@@ -14,22 +14,36 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { useFormStatus } from "react-dom";
+import { ArrowLeft, Loader } from "lucide-react";
 import SocialSignIn from "./SocialSignIn";
-import { LoginFormSchema, LoginFormSchemaType } from "@/lib/schema";
+import { AuthFormSchema, AuthFormSchemaType } from "@/lib/schema";
+import { login, signup } from "@/lib/actions/auth/actions";
+import { toast } from "../ui/use-toast";
 
 export function AuthForm() {
-  const form = useForm<LoginFormSchemaType>({
-    resolver: zodResolver(LoginFormSchema),
+  const form = useForm<AuthFormSchemaType>({
+    resolver: zodResolver(AuthFormSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(values: LoginFormSchemaType) {
-    console.log(values);
+  async function onSubmit(values: AuthFormSchemaType) {
+    const result = await signup(values);
+    console.log(result);
+
+    if (result) {
+      const { message } = JSON.parse(result);
+      toast({
+        title: "Authentication",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">{JSON.stringify(message)}</code>
+          </pre>
+        ),
+      });
+    }
   }
 
   return (
@@ -41,7 +55,7 @@ export function AuthForm() {
         </Button>
       </Link>
       <h1 className="text-3xl font-bold">Sign In</h1>
-      {/* <Form {...form}>
+      <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full space-y-5"
@@ -53,7 +67,11 @@ export function AuthForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="example@gmail.com" {...field} />
+                  <Input
+                    placeholder="example@gmail.com"
+                    disabled={form.formState.isSubmitting}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage className="dark:text-red-500" />
               </FormItem>
@@ -66,28 +84,33 @@ export function AuthForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="password" {...field} />
+                  <Input
+                    placeholder="password"
+                    type="password"
+                    disabled={form.formState.isSubmitting}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage className="dark:text-red-500" />
               </FormItem>
             )}
           />
-          <LoginButton />
+          <Button
+            disabled={form.formState.isSubmitting}
+            type="submit"
+            className="w-full transition-all"
+          >
+            {form.formState.isSubmitting && (
+              <Loader size={18} className="animate-spin mr-2" />
+            )}
+            Sign In
+          </Button>
         </form>
       </Form>
       <span className="text-sm font-semibold mx-auto text-slate-700 py-5">
         Or signin with
-      </span> */}
-      <SocialSignIn />
+      </span>
+      <SocialSignIn isDisabled={form.formState.isSubmitting} />
     </div>
-  );
-}
-
-function LoginButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button disabled={pending} type="submit" className="w-full">
-      Sign In
-    </Button>
   );
 }

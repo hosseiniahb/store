@@ -27,6 +27,7 @@ export async function addToFavoriteProduct(productId: string) {
       if (getUser.error) {
         return JSON.stringify(getUser);
       }
+
       const getFavoriteList = await supabase
         .from("users")
         .select("favorite_list")
@@ -39,7 +40,7 @@ export async function addToFavoriteProduct(productId: string) {
       const { favorite_list } = getFavoriteList.data;
 
       // if favorite_list and product in favorite list is exist, remove product from favorite list
-      if (favorite_list && favorite_list.includes(product_id)) {
+      if (favorite_list?.length && favorite_list.includes(product_id)) {
         const filterFavoriteList = getFavoriteList.data.favorite_list?.filter(
           (product) => product !== product_id
         );
@@ -57,11 +58,17 @@ export async function addToFavoriteProduct(productId: string) {
       }
 
       // if favorite_list is exist, push new product in list
-      // if (favorite_list) {
-      const favoriteProductList = [
-        ...getFavoriteList.data.favorite_list!,
-        product_id,
-      ];
+
+      let favoriteProductList: string[] = [];
+
+      if (getFavoriteList.data.favorite_list) {
+        favoriteProductList = [
+          ...getFavoriteList.data.favorite_list,
+          product_id,
+        ];
+      } else {
+        favoriteProductList.push(product_id);
+      }
 
       const updateFavoriteProduct = await supabase
         .from("users")
@@ -73,19 +80,6 @@ export async function addToFavoriteProduct(productId: string) {
       }
 
       return JSON.stringify({ data: "CREATE" });
-      // }
-
-      // if favorite_list is not exist, create new favorite list
-      // const createFavoriteList = await supabase
-      //   .from("users")
-      //   .update({ favorite_list: [product_id] })
-      //   .match({ id: getUser.data.user.id });
-
-      // if (createFavoriteList.error) {
-      //   return JSON.stringify({ data: null });
-      // }
-
-      // return JSON.stringify({ data: "SUCCESS" });
     } catch (error) {
       console.log(error);
     }

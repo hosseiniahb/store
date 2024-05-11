@@ -42,7 +42,7 @@ export default function EditUserInfoForm({
           user_name,
           phone: phone || null,
         });
-        router.push("/profile");
+        router.back();
       }
     } catch (error) {
       console.log(error);

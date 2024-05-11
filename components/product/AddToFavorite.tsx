@@ -6,32 +6,54 @@ import { addToFavoriteProduct } from "@/lib/actions/user/products.actions";
 import { useTransition } from "react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/lib/store/user.store";
+import { toast } from "../ui/use-toast";
 
 export default function AddToFavorite({ productId }: { productId: string }) {
   const { user, setUser } = useUser();
   const [isPending, startTransition] = useTransition();
 
   const handleAddToProductFavorite = () => {
-    startTransition(async () => {
-      try {
-        const response = await addToFavoriteProduct(productId);
-        const { data } = JSON.parse(response!);
+    try {
+      startTransition(async () => {
+        if (user?.id) {
+          const response = await addToFavoriteProduct(productId);
+          const { data } = JSON.parse(response!);
 
-        if (data === "CREATE") {
-          const addProductToFavorite = [...user?.favorite_list!, productId];
-          setUser({ ...user!, favorite_list: addProductToFavorite });
-        }
+          if (data === "CREATE") {
+            let addProductToFavorite: string[] = [];
+            if (user?.favorite_list) {
+              addProductToFavorite = [...user?.favorite_list!, productId];
+            } else {
+              addProductToFavorite.push(productId);
+            }
 
-        if (data === "REMOVE") {
-          const removeProductToFavorite = user?.favorite_list?.filter((id) => {
-            return id !== productId;
+            setUser({ ...user!, favorite_list: addProductToFavorite });
+          }
+
+          if (data === "REMOVE") {
+            const removeProductToFavorite = user?.favorite_list?.filter(
+              (id) => {
+                return id !== productId;
+              }
+            );
+            setUser({ ...user!, favorite_list: removeProductToFavorite! });
+          }
+        } else {
+          toast({
+            title: "Authentication",
+            description: (
+              <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                <code className="text-white">
+                  Please log in to your account first.
+                </code>
+              </pre>
+            ),
           });
-          setUser({ ...user!, favorite_list: removeProductToFavorite! });
         }
-      } catch (error) {
-        console.log(error);
-      }
-    });
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

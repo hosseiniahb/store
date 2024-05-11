@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const LoginFormSchema = z.object({
+export const AuthFormSchema = z.object({
   email: z.string().email({ message: "email is required." }),
   password: z
     .string()
@@ -41,7 +41,7 @@ export const UserInfoFormSchema = z.object({
   phone: z.string().optional(),
 });
 
-export type LoginFormSchemaType = z.infer<typeof LoginFormSchema>;
+export type AuthFormSchemaType = z.infer<typeof AuthFormSchema>;
 export type UserFormSchemaType = z.infer<typeof UserFormSchema>;
 export type ProductFormSchemaType = z.infer<typeof ProductFormSchema>;
 export type CategoryFormSchemaType = z.infer<typeof CategoryFormSchema>;

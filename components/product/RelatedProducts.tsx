@@ -30,7 +30,7 @@ export default function RelatedProducts({ productId }: { productId: string }) {
   return (
     <section className="mx-auto w-10/12 py-6">
       <h1 className="text-xl sm:text-3xl font-bold">Related Products</h1>
-      <div className="w-full flex gap-3 items-start py-3 mt-6">
+      <div className="w-full flex gap-3 items-start py-3 mt-6 overflow-x-auto">
         {isLoading ? (
           <ProductItemsSkeleton />
         ) : productsData.length ? (

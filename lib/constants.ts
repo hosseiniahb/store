@@ -56,6 +56,16 @@ export const DashboardSidebarLinks = [
     href: "/dashboard/categories",
     Icon: Group,
   },
+  {
+    name: "Favorites",
+    href: "/dashboard/product-favorites",
+    Icon: Heart,
+  },
+  {
+    name: "Setting",
+    href: "/dashboard/setting",
+    Icon: Settings,
+  },
 ];
 
 export const ProfileUserSidebarLinks = [
